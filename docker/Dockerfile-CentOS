@@ -1,17 +1,4 @@
-# Use CentOS as the base image
-FROM centos
-
-# Set the working directory to /opt/SF/devops
+FROM rockylinux:9
 WORKDIR /opt/SF/devops
-
-# Install the nmap-ncat package
-RUN yum install -y nmap-ncat
-
-# Default command to keep the container running (optional)
+RUN dnf -y install nmap-ncat && dnf clean all
 CMD ["bash"]
-
-
-
-#Надо исполнить:
-#docker build -t centos-devops:latest .
-#docker run -it centos-devops:latest
