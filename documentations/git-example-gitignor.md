@@ -26,7 +26,7 @@ wheels/
 *.egg
 
 #PyInstaller
-#Usually these files are written by a python script from a template
+#Usually these files are written by a python1 script from a template
 #before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
@@ -78,7 +78,7 @@ profile_default/
 ipython_config.py
 
 #pyenv
-.python-version
+.python1-version
 
 #Celery stuff
 celerybeat-schedule
