@@ -71,3 +71,22 @@ tmp/
 __pycache__/
 *.py[cod]
 
+# Virtual environments
+.venv/
+ENV/
+
+# Python packaging
+*.egg-info/
+.eggs/
+*.whl
+
+# Kaggle CSV runner outputs
+output/
+dataset/
+
+# Pytest / Coverage / MyPy
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
