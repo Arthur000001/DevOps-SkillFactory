@@ -1,0 +1,59 @@
+---
+- hosts: webserver
+  become: true
+  gather_facts: no
+
+  vars:
+    app_src_dir: /home/learn/Projects/tasktracker
+    app_dst_dir: /srv/app
+    app_name: flask-app
+    app_port: 80
+
+  tasks:
+    - name: ✅ Создаём директорию приложения
+      file:
+        path: "{{ app_dst_dir }}/conf"
+        state: directory
+        mode: "0755"
+
+    - name: 📦 Копируем исходный код приложения на ВМ
+      become: true
+      copy:
+        src: "{{ app_src_dir }}/"
+        dest: "{{ app_dst_dir }}/"
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: 🧱 Создаём Dockerfile на ВМ
+      copy:
+        dest: "{{ app_dst_dir }}/Dockerfile"
+        mode: "0644"
+        content: |
+          FROM python:3.12-slim
+          WORKDIR /app
+          COPY . /app
+          RUN pip install --no-cache-dir flask psycopg2-binary configparser
+          EXPOSE 80
+          CMD ["python3", "web.py"]
+
+    - name: 🧰 Проверяем, существует ли контейнер {{ app_name }}
+      shell: docker ps -a --filter "name={{ app_name }}" --format "{{ '{{' }}.Names{{ '}}' }}"
+      register: existing_container
+      ignore_errors: yes
+
+    - name: 🗑️ Удаляем старый контейнер, если есть
+      shell: docker rm -f {{ app_name }}
+      when: existing_container.stdout == app_name
+      ignore_errors: yes
+
+    - name: 🔨 Собираем Docker-образ {{ app_name }}
+      shell: docker build -t {{ app_name }}:latest {{ app_dst_dir }}
+      args:
+        chdir: "{{ app_dst_dir }}"
+
+    - name: 🚀 Запускаем контейнер {{ app_name }}
+      shell: >
+        docker run -d --name {{ app_name }}
+        -p {{ app_port }}:80
+        {{ app_name }}:latest

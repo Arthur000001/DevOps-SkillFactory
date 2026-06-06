@@ -1,0 +1,42 @@
+---
+- name: Настройка PostgreSQL в Docker
+  hosts: webserver
+  become: true
+  tasks:
+
+    - name: Проверяем, установлен ли Docker
+      shell: docker --version
+      register: docker_check
+      ignore_errors: true
+
+    - name: Проверяем, существует ли контейнер postgres
+      shell: docker ps -a --filter "name=postgres" --format "{{ '{{' }}.Names{{ '}}' }}"
+      register: postgres_container
+      ignore_errors: true
+
+    - name: Удаляем контейнер postgres, если он есть, но не запущен
+      shell: docker rm -f postgres
+      when: >
+        postgres_container.stdout is search("postgres") and
+        (lookup('pipe', "docker inspect -f {{ '{{' }} .State.Status {{ '}}' }} postgres") in ['created', 'exited'])
+      ignore_errors: true
+
+    - name: Проверяем, запущен ли контейнер postgres
+      shell: docker ps --filter "name=postgres" --format "{{ '{{' }}.Names{{ '}}' }}"
+      register: postgres_running
+      ignore_errors: true
+
+    - name: Создаём новый контейнер PostgreSQL, если его нет
+      shell: >
+        docker run -d --name postgres
+        -e POSTGRES_USER=app_user
+        -e POSTGRES_PASSWORD=app_pass
+        -e POSTGRES_DB=app_db
+        -p 5432:5432
+        postgres:16
+      when: postgres_running.stdout.find('postgres') == -1
+
+    - name: Выводим состояние контейнера
+      debug:
+        msg: "✅ Контейнер Postgres уже существует и запущен."
+      when: postgres_running.stdout.find('postgres') != -1

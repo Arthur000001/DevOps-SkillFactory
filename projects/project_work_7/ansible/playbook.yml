@@ -1,0 +1,23 @@
+---
+- name: 🐳 Проверка и установка Docker
+  import_playbook: playbooks/docker.yml
+
+- name: 🐘 Развёртывание контейнера PostgreSQL
+  import_playbook: playbooks/postgres.yml
+
+- name: 🐍 Сборка и запуск Flask-приложения
+  import_playbook: playbooks/app.yml
+
+# финальное уведомление
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: ✅ Все этапы успешно выполнены
+      debug:
+        msg: |
+          --------------------------------------------
+          ✅ Развёртывание завершено успешно!
+          🐳 Docker проверен или установлен
+          🐘 PostgreSQL контейнер запущен
+          🐍 Flask-приложение собрано и работает
+          --------------------------------------------

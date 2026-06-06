@@ -1,0 +1,28 @@
+---
+- hosts: webserver
+  become: true
+  gather_facts: no
+
+  tasks:
+    - name: Проверяем наличие Docker
+      command: docker --version
+      register: docker_check
+      ignore_errors: true
+
+    - name: Docker уже установлен
+      debug:
+        msg: "✅ Docker установлен: {{ docker_check.stdout }}"
+      when: docker_check.rc == 0
+
+    - name: Устанавливаем Docker, если его нет
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: docker_check.rc != 0
+
+    - name: Запускаем Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
