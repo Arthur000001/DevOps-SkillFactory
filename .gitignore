@@ -34,6 +34,7 @@ files/
 user1_id_rsa
 skillfactory
 *.pub
+ssh
 
 #My
 at_work.md
@@ -69,4 +70,23 @@ tmp/
 # Python
 __pycache__/
 *.py[cod]
+
+# Virtual environments
+.venv/
+ENV/
+
+# Python packaging
+*.egg-info/
+.eggs/
+*.whl
+
+# Kaggle CSV runner outputs
+output/
+dataset/
+
+# Pytest / Coverage / MyPy
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
 

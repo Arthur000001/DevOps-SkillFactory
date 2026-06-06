@@ -1,0 +1,4 @@
+FROM rockylinux:9
+WORKDIR /opt/SF/devops
+RUN dnf -y install nmap-ncat && dnf clean all
+CMD ["bash"]

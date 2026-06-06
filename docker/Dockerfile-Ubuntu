@@ -1,0 +1,15 @@
+# Use a specific version of Ubuntu as the base image
+FROM ubuntu:20.04
+
+# Set a maintainer label (optional)
+LABEL maintainer="your-email@example.com"
+
+# Use ENTRYPOINT to set the command to print the hostname
+ENTRYPOINT ["/bin/hostname"]
+
+
+
+#Надо исполнить:
+#docker build -t ubuntu-hostname:latest .
+#docker run ubuntu-hostname:latest
+
